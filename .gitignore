@@ -1,0 +1,5 @@
+# dependencies
+/node_modules
+
+# npm/yarn lockfile
+package-lock.json
