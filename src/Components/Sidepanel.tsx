@@ -53,7 +53,7 @@ const Sidepanel = ({
       <input
         type="text"
         placeholder="Enter Node Name"
-        className="w-full p-2 border border-gray-300 rounded-md"
+        className="w-full p-2 border border-gray-300 rounded-md dark:text-black"
         onChange={(e) =>
           setNodeData({ ...nodeData, description: e.target.value })
         }
