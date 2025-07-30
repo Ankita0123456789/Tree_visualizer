@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import {
   Background,
   ReactFlow,
@@ -71,8 +71,10 @@ const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
   []
 );
 const Flow = () => {
-  const { isOpen, nodeData, setLayout } = useSidepanel();
+  const { isOpen, nodeData, setLayout, setNodeData, setIsOpen } =
+    useSidepanel();
 
+  const [isRootNode, setIsRootNode] = useState(false);
   const [nodes, setNodes, onNodesChange] = useNodesState(
     layoutedNodes.map((node) => ({
       ...node,
@@ -136,7 +138,11 @@ const Flow = () => {
     setEdges(layouted.edges);
   };
 
-  const addChildNode = (type: string, parentId: string) => {
+  const addChildNode = (
+    type: string,
+    description: string,
+    parentId: string
+  ) => {
     const newId = uuid();
     const newNode = {
       id: newId,
@@ -146,6 +152,7 @@ const Flow = () => {
         label: type,
         type,
         id: newId,
+        description: description,
       },
     };
     const newEdge = {
@@ -159,6 +166,7 @@ const Flow = () => {
       [...nodes, newNode],
       [...edges, newEdge]
     );
+
     setNodes(
       layouted.nodes.map((node) => ({
         ...node,
@@ -166,6 +174,8 @@ const Flow = () => {
         targetPosition: node.targetPosition as Position,
       }))
     );
+    setIsOpen(false);
+    setNodeData({ id: "", label: "", description: "" });
     setEdges(layouted.edges);
   };
 
@@ -177,7 +187,7 @@ const Flow = () => {
     }
     return [];
   };
-  const addRootNode = (type: string) => {
+  const addRootNode = (type: string, description: string) => {
     if (!["Account", "Loan"].includes(type)) return;
     const id = uuid();
     const newNode = {
@@ -187,10 +197,14 @@ const Flow = () => {
       data: {
         label: type,
         type,
+        description: description,
         id,
       },
     };
     const layouted = getLayoutedElements([...nodes, newNode], edges);
+    setIsOpen(false);
+    setIsRootNode(false);
+    setNodeData({ id: "", label: "", description: "" });
     setNodes(
       layouted.nodes.map((node) => ({
         ...node,
@@ -207,8 +221,14 @@ const Flow = () => {
         isOpen={isOpen}
         node={nodeData}
         onDelete={() => deleteNodeWithChildren(nodeData.id)}
-        onAddChild={(childType) => addChildNode(childType, nodeData.id)}
+        onAddChild={(childType, description) =>
+          addChildNode(childType, description, nodeData.id)
+        }
+        onAddRootNode={(type, description) =>
+          addRootNode(type, description ?? "")
+        }
         allowedChildren={allowedChildren()}
+        isRootNode={isRootNode}
       />
       <ReactFlow
         nodes={nodes}
@@ -275,7 +295,11 @@ const Flow = () => {
           <div className="flex items-center gap-2 mt-5">
             <button
               className="bg-[#0077cc] text-white p-3 px-3 rounded-md z-10 text-xl w-[180px]"
-              onClick={() => addRootNode("Account")}
+              onClick={() => {
+                setIsRootNode(true);
+                setIsOpen(true);
+                setNodeData({ ...nodeData, label: "Account" });
+              }}
             >
               <span className="flex items-center justify-center">
                 <span className="material-symbols-outlined mr-2">
@@ -287,7 +311,11 @@ const Flow = () => {
             <span className="text-gray-700 mx-4 text-xl">OR</span>
             <button
               className="bg-[#cc4444] text-white p-3 px-3 rounded-md z-10 text-xl w-[180px]"
-              onClick={() => addRootNode("Loan")}
+              onClick={() => {
+                setIsRootNode(true);
+                setIsOpen(true);
+                setNodeData({ ...nodeData, label: "Loan" });
+              }}
             >
               <span className="flex items-center justify-center">
                 <span className="material-symbols-outlined mr-2">

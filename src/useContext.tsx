@@ -6,8 +6,13 @@ export const SidepanelContext = createContext<{
   nodeData: {
     id: string;
     label: string;
+    description: string;
   };
-  setNodeData: (nodeData: { id: string; label: string }) => void;
+  setNodeData: (nodeData: {
+    id: string;
+    label: string;
+    description: string;
+  }) => void;
   layout: string;
   setLayout: (layout: string) => void;
 }>({
@@ -16,6 +21,7 @@ export const SidepanelContext = createContext<{
   nodeData: {
     id: "",
     label: "",
+    description: "",
   },
   setNodeData: () => {},
   layout: "TB",

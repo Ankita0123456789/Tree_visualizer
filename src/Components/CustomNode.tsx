@@ -1,15 +1,21 @@
 import { Handle, Position } from "@xyflow/react";
 import { useSidepanel } from "../useContext";
 import { colors } from "../initialElements";
-// import { useState } from "react";
 
-const CustomNode = (props: { id: string; data: { label: string } }) => {
+const CustomNode = (props: {
+  id: string;
+  data: { label: string; description?: string };
+}) => {
   const { setIsOpen, setNodeData, layout } = useSidepanel();
   const handleClick = () => {
     setIsOpen(true);
-    setNodeData({ id: props.id, label: props.data.label });
+    setNodeData({
+      id: props.id,
+      label: props.data.label,
+      description: props.data.description || "",
+    });
   };
-  console.log(layout);
+
   const icon = () => {
     if (props.data.label === "Collateral") {
       return "home";
@@ -19,11 +25,11 @@ const CustomNode = (props: { id: string; data: { label: string } }) => {
       return "account_balance";
     }
   };
+
   return (
     <>
-      {" "}
       <div
-        className={`w-[150px] flex items-center justify-center py-2 px-4 rounded-md text-white font-bold `}
+        className={`w-[180px] flex flex-col items-center justify-center rounded-md text-white font-bold min-h-[60px]`}
         style={{
           background: colors[props.data.label as keyof typeof colors],
         }}
@@ -35,9 +41,13 @@ const CustomNode = (props: { id: string; data: { label: string } }) => {
             ["TB", "BT"].includes(layout) ? Position.Top : Position.Left
           }
         />
-        <div className={`flex items-center gap-1 justify-cente`}>
-          <span className="material-symbols-outlined">{icon()}</span>
-          <label htmlFor="text">{props.data.label}</label>
+        <div
+          className={`flex flex-col items-center justify-center text-center`}
+        >
+          <div className="flex items-center gap-1">
+            <span className="material-symbols-outlined">{icon()}</span>
+            <label htmlFor="text">{props.data.description}</label>
+          </div>
         </div>
         <Handle
           type="source"

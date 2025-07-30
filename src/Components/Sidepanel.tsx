@@ -8,19 +8,23 @@ const Sidepanel = ({
   onAddChild,
   allowedChildren,
   node,
+  onAddRootNode,
+  isRootNode,
 }: {
   isOpen: boolean;
   onDelete: (id: string) => void;
-  onAddChild: (id: string, childType: string) => void;
+  onAddChild: (id: string, childType: string, description?: string) => void;
+  onAddRootNode: (type: string, description?: string) => void;
   allowedChildren: string[];
   node: {
     id: string;
     label: string;
+    description?: string;
   };
+  isRootNode: boolean;
 }) => {
-  const { setIsOpen } = useSidepanel();
+  const { setIsOpen, setNodeData, nodeData } = useSidepanel();
   const sidepanelRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -39,6 +43,19 @@ const Sidepanel = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen, setIsOpen]);
+
+  const input = () => {
+    return (
+      <input
+        type="text"
+        placeholder="Enter Node Name"
+        className="w-full p-2 border border-gray-300 rounded-md"
+        onChange={(e) =>
+          setNodeData({ ...nodeData, description: e.target.value })
+        }
+      />
+    );
+  };
 
   return (
     <>
@@ -69,17 +86,53 @@ const Sidepanel = ({
                   {node.label}
                 </span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-600">ID:</span>
-                <span className="text-sm font-mono text-gray-700 bg-gray-100 px-3 py-1 rounded">
-                  {node.id}
-                </span>
-              </div>
+              {node.id && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-600">ID:</span>
+                  <span className="text-sm font-mono text-gray-700 bg-gray-100 px-3 py-1 rounded">
+                    {node.id}
+                  </span>
+                </div>
+              )}
+              {node.description && (
+                <div className="flex items-start justify-between">
+                  <span className="text-sm font-medium text-gray-600">
+                    Description:
+                  </span>
+                  <span className="text-sm text-gray-700 bg-gray-100 px-3 py-1 rounded max-w-[200px] text-right">
+                    {node.description}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Add Child Section */}
-          {allowedChildren.length > 0 && (
+          {isRootNode && (
+            <div className="mb-6">
+              <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <span className="material-symbols-outlined text-green-600">
+                  add
+                </span>
+                Add Root Node
+              </h4>
+              <div className="grid grid-cols-1 gap-2">
+                {input()}
+
+                <button
+                  key={node.label}
+                  onClick={() => onAddRootNode(node.label, node.description)}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                  style={{
+                    background: colors[node.label as keyof typeof colors],
+                  }}
+                >
+                  {node.label}
+                </button>
+              </div>
+            </div>
+          )}
+          {allowedChildren.length > 0 && !isRootNode && (
             <div className="mb-6">
               <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                 <span className="material-symbols-outlined text-green-600">
@@ -89,10 +142,13 @@ const Sidepanel = ({
               </h4>
 
               <div className="grid grid-cols-1 gap-2">
+                {input()}
                 {allowedChildren.map((childType) => (
                   <button
                     key={childType}
-                    onClick={() => onAddChild(childType, node.id)}
+                    onClick={() =>
+                      onAddChild(childType, node.description ?? "", node.id)
+                    }
                     className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
                     style={{
                       background: colors[childType as keyof typeof colors],
