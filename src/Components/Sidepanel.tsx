@@ -10,6 +10,7 @@ const Sidepanel = ({
   node,
   onAddRootNode,
   isRootNode,
+  setIsRootNode,
 }: {
   isOpen: boolean;
   onDelete: (id: string) => void;
@@ -22,6 +23,7 @@ const Sidepanel = ({
     description?: string;
   };
   isRootNode: boolean;
+  setIsRootNode: (isRootNode: boolean) => void;
 }) => {
   const { setIsOpen, setNodeData, nodeData } = useSidepanel();
   const sidepanelRef = useRef<HTMLDivElement>(null);
@@ -32,6 +34,8 @@ const Sidepanel = ({
         !sidepanelRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
+        setNodeData({ id: "", label: "", description: "" });
+        setIsRootNode(false);
       }
     };
 
@@ -162,19 +166,21 @@ const Sidepanel = ({
           )}
 
           {/* Actions Section */}
-          <div>
-            <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-              Actions
-            </h4>
+          {node.id && (
+            <div>
+              <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                Actions
+              </h4>
 
-            <button
-              onClick={() => onDelete(node.id)}
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
-            >
-              <span className="material-symbols-outlined">delete</span>
-              Delete Node & Descendants
-            </button>
-          </div>
+              <button
+                onClick={() => onDelete(node.id)}
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+              >
+                <span className="material-symbols-outlined">delete</span>
+                Delete Node & Descendants
+              </button>
+            </div>
+          )}
         </div>
       )}
     </>

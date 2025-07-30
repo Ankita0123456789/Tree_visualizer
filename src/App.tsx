@@ -136,6 +136,7 @@ const Flow = () => {
       }))
     );
     setEdges(layouted.edges);
+    setIsOpen(false);
   };
 
   const addChildNode = (
@@ -214,7 +215,7 @@ const Flow = () => {
     );
     setEdges(layouted.edges);
   };
-
+  console.log(isRootNode);
   return (
     <div className="w-full h-screen">
       <Sidepanel
@@ -229,6 +230,7 @@ const Flow = () => {
         }
         allowedChildren={allowedChildren()}
         isRootNode={isRootNode}
+        setIsRootNode={setIsRootNode}
       />
       <ReactFlow
         nodes={nodes}
@@ -314,7 +316,7 @@ const Flow = () => {
               onClick={() => {
                 setIsRootNode(true);
                 setIsOpen(true);
-                setNodeData({ ...nodeData, label: "Loan" });
+                setNodeData({ id: "", label: "Loan", description: "" });
               }}
             >
               <span className="flex items-center justify-center">
