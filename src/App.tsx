@@ -21,6 +21,7 @@ import "@xyflow/react/dist/style.css";
 import CustomNode from "./Components/CustomNode";
 import CustomEdge from "./Components/CustomEdge";
 import Sidepanel from "./Components/Sidepanel";
+import TreeView from "./Components/TreeView";
 import { useSidepanel } from "./useContext";
 
 const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
@@ -75,6 +76,7 @@ const Flow = () => {
     useSidepanel();
 
   const [isRootNode, setIsRootNode] = useState(false);
+  const [isTreeViewOpen, setIsTreeViewOpen] = useState(false);
   const [nodes, setNodes, onNodesChange] = useNodesState(
     layoutedNodes.map((node) => ({
       ...node,
@@ -232,6 +234,12 @@ const Flow = () => {
         isRootNode={isRootNode}
         setIsRootNode={setIsRootNode}
       />
+      <TreeView
+        nodes={nodes}
+        edges={edges}
+        isOpen={isTreeViewOpen}
+        onClose={() => setIsTreeViewOpen(false)}
+      />
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -246,6 +254,17 @@ const Flow = () => {
       >
         {nodes.length > 0 && (
           <Panel position="top-right" className="flex items-center">
+            <button
+              className="bg-green-600 text-white p-2 px-3 rounded-md mr-2"
+              onClick={() => setIsTreeViewOpen(true)}
+            >
+              <span className="flex items-center">
+                <span className="material-symbols-outlined mr-1">
+                  account_tree
+                </span>
+                Tree View
+              </span>
+            </button>
             <button
               className="bg-blue-500 text-white p-2 px-3 rounded-md mr-2"
               onClick={() => onLayout("TB")}

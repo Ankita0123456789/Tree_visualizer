@@ -66,7 +66,7 @@ const Sidepanel = ({
       {isOpen && (
         <div
           ref={sidepanelRef}
-          className="fixed top-0 left-0 w-80 h-full shadow-xl border-r border-gray-200 z-50 p-6 overflow-y-auto bg-white"
+          className="fixed top-0 left-0 w-80 h-full shadow-xl border-r border-gray-200 z-50 p-4 overflow-y-auto bg-white"
         >
           {/* Header */}
           <div className="mb-6">
@@ -99,7 +99,7 @@ const Sidepanel = ({
                 </div>
               )}
               {node.description && (
-                <div className="flex items-start justify-between">
+                <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-600">
                     Description:
                   </span>
